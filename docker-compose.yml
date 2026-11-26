@@ -1,0 +1,53 @@
+name: freshrss-local
+
+services:
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    restart: unless-stopped
+    ports:
+      - "${FRESHRSS_PORT:-8090}:80"
+    environment:
+      CRON_MIN: ${CRON_MIN:-3,18,33,48}
+      TZ: ${TZ:-Europe/Moscow}
+    volumes:
+      - ./runtime/data:/var/www/FreshRSS/data
+      - ./runtime/extensions:/var/www/FreshRSS/extensions
+      - ./runtime/themes/Reed:/var/www/FreshRSS/p/themes/Reed
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - php
+        - -r
+        - exit(intval(!@file_get_contents('http://127.0.0.1/i/')));
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    init: true
+
+  db:
+    image: mariadb:11
+    container_name: freshrss-db
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?MARIADB_ROOT_PASSWORD must be set}
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-freshrss}
+      MARIADB_USER: ${MARIADB_USER:-freshrss}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?MARIADB_PASSWORD must be set}
+      TZ: ${TZ:-Europe/Moscow}
+    volumes:
+      - ./runtime/db:/var/lib/mysql
+    healthcheck:
+      test:
+        - CMD
+        - healthcheck.sh
+        - --connect
+        - --innodb_initialized
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    init: true

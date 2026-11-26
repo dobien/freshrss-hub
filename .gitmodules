@@ -1,0 +1,6 @@
+[submodule "runtime/extensions/xExtension-ThreePaneReader"]
+	path = runtime/extensions/xExtension-ThreePaneReader
+	url = https://github.com/dobien/xExtension-ThreePaneReader.git
+[submodule "runtime/themes/Reed"]
+	path = runtime/themes/Reed
+	url = https://github.com/dobien/reed-theme.git
