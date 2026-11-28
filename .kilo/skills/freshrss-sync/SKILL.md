@@ -1,13 +1,18 @@
 ---
 name: freshrss-sync
-description: Синхронизация подписок/настроек FreshRSS с VPS (185.72.146.91) в локальный Docker — запуск scripts/pull-from-server.ps1. Использовать, когда пользователь просит «синхронизируй фиды с сервера», «стяни подписки», обновить локальную копию FreshRSS.
+description: Синхронизация подписок/настроек FreshRSS с VPS (185.72.146.91) в локальный Docker — запуск scripts/pull-from-server.ps1. Использовать, когда нужно стянуть актуальные подписки/категории/настройки профиля с серверного FreshRSS в локальный.
 ---
 
-# freshrss-sync
+# FreshRSS sync (server → local)
 
-Логика — в скрипте репо: `scripts/pull-from-server.ps1` (rss-hub).
+Запускает `scripts/pull-from-server.ps1` из корня репо rss-hub.
 
-1. Убедиться, что локальный стек поднят: `docker compose up -d` в `D:\Work\Software_Development\Projects\freshrss`.
-2. Запустить: `./scripts/pull-from-server.ps1` (пароль sudo сервера спросить у пользователя или из `$env:FRESHRSS_SUDO_PASSWORD`; ssh: krechet@185.72.146.91:729).
-3. Скрипт: экспорт zip на сервере → scp → `import-for-user.php` → `actualize-user.php`. Перезаписывает локальные подписки пользователя krechet — НЕ запускать на автомате при старте сессии.
-4. Проверка: http://127.0.0.1:8090 (логин krechet), `docker compose exec freshrss php ./cli/list-users.php`.
+Шаги:
+1. Убедиться, что локальный стек запущен: `docker compose up -d` (репо `D:\Work\Software_Development\Projects\freshrss`).
+2. Запросить у пользователя sudo-пароль сервера (krechet@185.72.146.91, порт 729), если не дан.
+3. Выполнить:
+   `pwsh -File scripts/pull-from-server.ps1 -SudoPassword '<пароль>'`
+4. Скрипт перезаписывает подписки/настройки ЛОКАЛЬНОГО пользователя `krechet` — предупредить пользователя.
+5. Проверка: http://127.0.0.1:8090 — категории и подписки с сервера.
+
+Данные: OPML (подписки) + JSON (настройки) экспортируются CLI серверного FreshRSS (`/opt/freshrss/cli/export-*`), импортируются CLI локального контейнера. Тип БД не важен (сервер SQLite, локаль MariaDB).

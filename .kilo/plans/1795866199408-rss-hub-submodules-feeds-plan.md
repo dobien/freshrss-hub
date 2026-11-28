@@ -43,6 +43,7 @@ rss-hub/
 - Решение: разово сейчас + постоянный **`scripts/pull-from-server.ps1`** в репо rss-hub (ручной запуск; автозапуска нет — синк перезаписывает локальные подписки) + **Kilo-скилл** для вызова из агента.
 - Скрипт делает: ssh-export OPML/JSON с сервера (`echo <pass> | sudo -S -u www-data php /opt/freshrss/cli/export-{opml,json}-for-user.php --user krechet | tee ~/{krechet.opml,krechet.json}`) → scp в temp → `docker compose cp` в контейнер freshrss → `php ./cli/import-{opml,json}-for-user.php --user krechet <file>` → проверка количества подписок. Пароль sudo передавать параметром `-SudoPassword` или спросить; ssh-ключи уже настроены.
 - Kilo-скилл `freshrss-sync`: файл **`D:\...\freshrss\.kilo\skills\freshrss-sync\SKILL.md`** (внутри этой папки/репо, версионируется в rss-hub; как у остальных скиллов — описание + шаги). Описание: «Синхронизация подписок/настроек FreshRSS с VPS (185.72.146.91) в локальный Docker — запуск scripts/pull-from-server.ps1». Скилл только документирует вызов скрипта; логика живёт в скрипте в репо.
+- **Скрипт и скилл коммитятся в rss-hub** (вместе с README/адаптерами, шаг 1a): `scripts/pull-from-server.ps1` + `.kilo/skills/freshrss-sync/SKILL.md`. В скрипте НЕ хранить sudo-пароль (передаётся параметром/интерактивно).
 
 ### 1. Сабмодули и адаптеры — ВЫПОЛНЕНО (см. ПРОГРЕСС)
 - `git submodule add https://github.com/RSS-Bridge/rss-bridge.git rss-bridge`
