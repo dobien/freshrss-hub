@@ -1,3 +1,4 @@
 runtime/data/
 runtime/db/
 .env
+runtime/rss-bridge-config.ini.php

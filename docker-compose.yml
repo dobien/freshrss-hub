@@ -29,6 +29,18 @@ services:
       start_period: 60s
     init: true
 
+  rss-feeds-bridges:
+    image: rssbridge/rss-bridge:latest
+    container_name: rss-feeds-bridges
+    restart: unless-stopped
+    ports:
+      - "8091:80"
+    volumes:
+      - ./runtime/rss-bridge-config.ini.php:/app/config.ini.php:ro
+      - ./feeds-bridges/PetrikircheBridge.php:/app/bridges/PetrikircheBridge.php:ro
+      - ./feeds-bridges/AnnenkircheBridge.php:/app/bridges/AnnenkircheBridge.php:ro
+    init: true
+
   db:
     image: mariadb:11
     container_name: freshrss-db
